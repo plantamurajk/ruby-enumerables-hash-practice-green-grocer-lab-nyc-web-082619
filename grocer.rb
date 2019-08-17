@@ -1,3 +1,5 @@
+require 'pry'
+
 def consolidate_cart(cart)
   cart_hash = {}
   counter = 0
@@ -50,9 +52,10 @@ end
 
 def apply_clearance(cart)
   new_cart = cart.map do |item|
-    if item[:clearance] then  
-      item[:price] *= 0.8 
-      item[:price].round(2)
+    #binding.pry
+    if item[1][:clearance] then  
+      item[1][:price] *= 0.8 
+      item[1][:price] = item[1][:price].round(2)
       end
     end
   
@@ -60,5 +63,18 @@ def apply_clearance(cart)
 end
 
 def checkout(cart, coupons)
-  # code here
+  cart_hash = consolidate_cart(cart)
+  cart_hash = apply_coupons(cart_hash, coupons)
+  cart_hash = apply_clearance(cart_hash)
+  
+  total = 0
+  
+  total = cart_hash.map { |item| item[1][:price]*item[1][:count] }.sum
+  
+  if (total > 100) then
+    total *= 0.9
+    total = total.round(2)
+  end
+
+  return total
 end
